@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<script  type="text/javascript"  src="./pixi.min.js"></script>
+<body>
+    <h1>hello</h1>
+    <canvas id="canvas" style="width: 30%; height: 30%;"></canvas>
+
+    <script type="text/javascript" >
+
+ var canvasWidth = document.body.offsetWidth;
+ var canvasHeight = document.body.offsetHeight;
+ var app = new PIXI.Application(canvasWidth,  canvasHeight, {
+   antialias: true,
+   transparent: true,
+   view: document.querySelector('#canvas')
+ });
+
+ app.stage.alpha = 1;
+ app.stage.interactive = true;
+
+var layer1 = PIXI.Sprite.fromImage('https://i.imgur.com/1RouJsf.jpg');
+
+  layer1.width = 30
+  layer1.height = 40;
+  layer1.x = document.body.offsetWidth / 2 - layer1.width;
+  layer1.y = 0;
+
+
+  var layer2 = PIXI.Sprite.fromImage('https://i.imgur.com/1RouJsf.jpg');
+
+  layer2.width =  30;
+  layer2.height = 40;
+  layer2.x = document.body.offsetWidth / 2 - layer2.width;
+  layer2.y = 0;
+
+
+  var displacementFilterTexture = PIXI.Sprite.fromImage('https://i.imgur.com/lPMCakd.jpg');
+
+  displacementFilterTexture.width = 300;
+  displacementFilterTexture.height = 400;
+  displacementFilterTexture.x = document.body.offsetWidth / 2 - displacementFilterTexture.width;
+  displacementFilterTexture.y = 0;
+
+  var mainContainer = new PIXI.Container();
+
+
+  mainContainer.addChild(layer1);
+  mainContainer.addChild(displacementFilterTexture);
+
+
+  var additionalContainer = new PIXI.Container();
+  additionalContainer.addChild(layer2);
+
+
+  var circle = new PIXI.Graphics();
+  circle.lineStyle(0);
+  circle.beginFill(0xFF3300, 0);
+  circle.drawCircle(0, 0,150);
+  circle.endFill();
+  mainContainer.addChild(circle);
+
+  additionalContainer.mask = circle;
+  mainContainer.addChild(additionalContainer);
+
+
+  var blurFilter = new PIXI.filters.BlurFilter(15,8,0,0);
+
+  var displacementFilter = new    PIXI.filters.DisplacementFilter(displacementFilterTexture,0);
+
+  displacementFilter.blendMode = PIXI.BLEND_MODES.LIGHTEN;
+
+   layer1.filters = [blurFilter, displacementFilter];
+   layer2.filters = [displacementFilter];
+
+   app.stage.addChild(mainContainer);
+
+   setMoveHandlers(app, circle, displacementFilter);
+
+
+
+function setMoveHandlers(app, circle, displacementFilter) {
+app.stage
+    .on('mousemove', onPointerMove.bind(null, circle, displacementFilter))
+    .on('touchmove', onPointerMove.bind(null, circle, displacementFilter));
+}
+
+function onPointerMove(circle, displacementFilter, eventData)
+
+{
+  circle.position.set(eventData.data.global.x, eventData.data.global.y);
+  setTilt(25, eventData.data.global.x, eventData.data.global.y, displacementFilter);
+
+}
+
+function setTilt(maxTilt, mouseX, mouseY, displacementFilter) {
+
+  var midpointX = document.body.offsetWidth / 2,
+  midpointY = document.body.offsetHeight / 2,
+  posX = midpointX-mouseX,
+  posY = midpointY-mouseY,
+  valX = (posX / midpointX) * maxTilt,
+  valY = (posY / midpointY) * maxTilt;
+  displacementFilter.scale.x = valX;
+  displacementFilter.scale.y = valY;
+
+}
+    </script>
+</body>
+
+</html>

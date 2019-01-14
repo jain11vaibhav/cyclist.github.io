@@ -5,7 +5,6 @@
 </head>
 <script  type="text/javascript"  src="./pixi.min.js"></script>
 <body>
-    <h1>hello</h1>
     <canvas id="canvas" style="width: 100%; height: 60%;"></canvas>
 
     <script type="text/javascript" >
@@ -62,17 +61,13 @@ var layer1 = PIXI.Sprite.fromImage('https://i.imgur.com/1RouJsf.jpg');
   circle.endFill();
   mainContainer.addChild(circle);
 
-  additionalContainer.mask = circle;
   mainContainer.addChild(additionalContainer);
-
-
-  var blurFilter = new PIXI.filters.BlurFilter(15,8,0,0);
 
   var displacementFilter = new    PIXI.filters.DisplacementFilter(displacementFilterTexture,0);
 
   displacementFilter.blendMode = PIXI.BLEND_MODES.LIGHTEN;
 
-   layer1.filters = [blurFilter, displacementFilter];
+   layer1.filters = [ displacementFilter];
    layer2.filters = [displacementFilter];
 
    app.stage.addChild(mainContainer);
